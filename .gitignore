@@ -1,0 +1,45 @@
+# ---------- 通用 ----------
+.DS_Store
+Thumbs.db
+*.log
+
+# ---------- Python / Django ----------
+__pycache__/
+*.py[cod]
+*$py.class
+*.sqlite3
+.env
+venv/
+.venv/
+env/
+ENV/
+staticfiles/
+media/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# ---------- Node / Vue ----------
+node_modules/
+dist/
+dist-ssr/
+.vite/
+.env.local
+.env.*.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ---------- 微信小程序 ----------
+unpackage/
+miniprogram_npm/
+project.private.config.json
+.wechat/
+
+# ---------- IDE / 编辑器 ----------
+.idea/
+.vscode/
+*.iml
+*.swp
+*~

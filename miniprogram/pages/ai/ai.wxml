@@ -1,0 +1,31 @@
+<scroll-view scroll-y class="chat-box" scroll-into-view="{{scrollToView}}" scroll-with-animation>
+  <!-- 顶部：加载历史对话 -->
+  <view wx:if="{{hasMoreHistory}}" class="history-trigger" bindtap="loadHistory">
+    <text wx:if="{{!loadingHistory}}">📜 查看更早的对话</text>
+    <text wx:else>加载中...</text>
+  </view>
+  <view wx:elif="{{!loadingHistory && messages.length > 0}}" class="history-end">— 没有更早的对话了 —</view>
+
+  <!-- 消息列表 -->
+  <block wx:for="{{messages}}" wx:key="index" wx:for-index="idx">
+    <view class="msg-wrap {{item.role}}" id="msg-{{idx}}">
+      <view class="msg-avatar">{{item.role === 'user' ? '👤' : '🤖'}}</view>
+      <view class="msg-bubble {{item.role}}">
+        <text>{{item.text}}</text>
+      </view>
+    </view>
+  </block>
+
+</scroll-view>
+
+<view class="input-bar">
+  <view class="input-row">
+    <input class="chat-input" placeholder="问理财问题..." value="{{input}}" bindinput="onInput" confirm-type="send" bindconfirm="send" />
+    <button class="send-btn" bindtap="send">发送</button>
+  </view>
+  <view class="input-chips">
+    <text class="mini-chip" bindtap="sendQuick" data-text="帮我分析本月消费">📊 分析本月消费</text>
+    <text class="mini-chip" bindtap="sendQuick" data-text="给我省钱建议">💡 省钱建议</text>
+    <text class="mini-chip" bindtap="sendQuick" data-text="这个月哪个分类花最多">🏷️ 分类排行</text>
+  </view>
+</view>

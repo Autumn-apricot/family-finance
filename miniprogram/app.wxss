@@ -1,0 +1,86 @@
+page {
+  background: #f0f2f5;
+  font-size: 28rpx;
+  color: #333;
+  --primary: #1677ff;
+  --danger: #ff4d4f;
+  --success: #07c160;
+  --warning: #fa8c16;
+  --bg: #f0f2f5;
+}
+
+.card {
+  background: #fff;
+  border-radius: 20rpx;
+  padding: 28rpx;
+  margin: 20rpx 24rpx;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.04);
+}
+
+.section-title {
+  font-size: 30rpx;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin-bottom: 20rpx;
+  padding-bottom: 16rpx;
+  border-bottom: 2rpx solid #f0f2f5;
+}
+
+.primary-btn {
+  background: #1677ff;
+  color: #fff;
+  border: none;
+  border-radius: 14rpx;
+  font-size: 30rpx;
+  font-weight: 600;
+  padding: 22rpx;
+  box-shadow: 0 4rpx 12rpx rgba(22, 119, 255, 0.25);
+}
+
+.secondary-btn {
+  background: #f0f5ff;
+  color: #1677ff;
+  border: none;
+  border-radius: 14rpx;
+  font-size: 28rpx;
+  padding: 18rpx;
+}
+
+.text-muted {
+  color: #999;
+  font-size: 24rpx;
+}
+
+/* 公共弹窗 */
+.modal-mask {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.45);
+  z-index: 100; display: flex; align-items: center; justify-content: center;
+  backdrop-filter: blur(4px);
+}
+.modal-card {
+  background: #fff; border-radius: 20rpx; padding: 36rpx;
+  width: 650rpx; max-height: 82vh; overflow-y: auto;
+  box-shadow: 0 16rpx 48rpx rgba(0,0,0,0.12);
+}
+.modal-title {
+  font-size: 34rpx; font-weight: 700; text-align: center;
+  color: #1a1a2e; margin-bottom: 28rpx;
+}
+.modal-card input, .modal-card .picker-row {
+  border: 1rpx solid #e8e8e8; padding: 22rpx 24rpx;
+  border-radius: 14rpx; background: #fafafa; margin-bottom: 20rpx; font-size: 28rpx;
+}
+.modal-btns { display: flex; gap: 20rpx; margin-top: 16rpx; }
+.modal-btns button { flex: 1; border-radius: 14rpx; }
+.picker-label { font-size: 26rpx; color: #666; margin-bottom: 12rpx; font-weight: 500; }
+.picker-row {
+  border: 1rpx solid #e8e8e8; padding: 22rpx 24rpx;
+  border-radius: 14rpx; background: #fafafa; margin-bottom: 20rpx;
+}
+
+input {
+  border: 1rpx solid #e8e8e8; padding: 22rpx 24rpx;
+  border-radius: 14rpx; background: #fafafa; font-size: 28rpx;
+}
+
+.income-color { color: #07c160; }

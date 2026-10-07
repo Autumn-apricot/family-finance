@@ -1,0 +1,32 @@
+<view class="login-page">
+  <view class="login-bg"></view>
+  <view class="login-content">
+    <view class="logo">💰</view>
+    <view class="app-name">家庭资产</view>
+    <view class="app-desc">智能记账 · 轻松管理</view>
+
+    <view wx:if="{{!backendOk}}" class="backend-warn">{{backendHint}}</view>
+
+    <view class="login-card">
+      <view class="card-title">{{isRegister ? '创建账号' : '欢迎回来'}}</view>
+      <view class="input-wrap">
+        <text class="input-icon">👤</text>
+        <input placeholder="用户名" value="{{username}}" bindinput="onUsername" />
+      </view>
+      <view class="input-wrap">
+        <text class="input-icon">🔒</text>
+        <input placeholder="密码" password value="{{password}}" bindinput="onPassword" />
+      </view>
+      <view wx:if="{{isRegister}}" class="input-wrap">
+        <text class="input-icon">✏️</text>
+        <input placeholder="昵称（选填）" value="{{nickname}}" bindinput="onNickname" />
+      </view>
+      <button class="login-btn" bindtap="submit">{{isRegister ? '注 册' : '登 录'}}</button>
+      <view class="switch-link" bindtap="toggleMode">{{isRegister ? '已有账号？去登录' : '没有账号？去注册'}}</view>
+    </view>
+
+    <view class="login-footer">
+      <text>测试账号 zhangsan / 123456</text>
+    </view>
+  </view>
+</view>

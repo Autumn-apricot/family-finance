@@ -1,0 +1,56 @@
+/* 类型切换 */
+.type-tabs { display: flex; margin: 20rpx 24rpx; gap: 16rpx; }
+.type-tab { flex: 1; text-align: center; padding: 28rpx 0; border-radius: 20rpx; font-size: 32rpx; font-weight: 700; background: #fff; color: #999; transition: all .25s; box-shadow: 0 2rpx 12rpx rgba(0,0,0,.03); }
+.type-tab.on { color: #fff; box-shadow: 0 6rpx 20rpx rgba(0,0,0,.12); transform: scale(1.02); }
+.type-tab.out.on { background: linear-gradient(135deg, #ff4d4f, #ff7a45); }
+.type-tab.in.on { background: linear-gradient(135deg, #07c160, #36cfc9); }
+
+/* 智能记账 */
+.smart-card { padding: 20rpx 28rpx; }
+.smart-row { display: flex; gap: 14rpx; }
+.smart-input { flex: 1; background: #f5f5f5; border: none; border-radius: 14rpx; padding: 20rpx 24rpx; font-size: 28rpx; }
+.smart-btn { background: linear-gradient(135deg, #1677ff, #36cfc9); color: #fff; border: none; border-radius: 14rpx; padding: 20rpx 28rpx; font-size: 26rpx; font-weight: 700; white-space: nowrap; }
+.mic-btn { background: #f5f5f5; color: #666; font-size: 32rpx; padding: 20rpx 24rpx; min-width: 80rpx; }
+.mic-btn.recording { background: #ff4d4f; color: #fff; animation: pulse 0.8s infinite; }
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.7; } }
+.recording-hint { display: flex; justify-content: space-between; align-items: center; margin-top: 14rpx; padding: 12rpx 20rpx; background: #fff2f0; border-radius: 10rpx; }
+.rec-wave { font-size: 26rpx; color: #ff4d4f; }
+.rec-time { font-size: 24rpx; color: #999; }
+
+/* 表单 */
+.form-card { padding: 28rpx; }
+.form-section { margin-bottom: 20rpx; }
+.form-label { font-size: 24rpx; color: #999; font-weight: 600; margin-bottom: 10rpx; }
+.form-value { border: 1rpx solid #e8e8e8; padding: 20rpx 24rpx; border-radius: 14rpx; background: #fafafa; font-size: 28rpx; color: #333; }
+.form-row { display: flex; }
+.form-card input { background: #fafafa; border: 1rpx solid #e8e8e8; padding: 20rpx 24rpx; border-radius: 14rpx; font-size: 28rpx; }
+
+/* 筛选 */
+.list-card { padding: 28rpx; }
+.list-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4rpx; }
+.list-title { font-size: 30rpx; font-weight: 700; color: #1a1a2e; }
+.list-filter { display: flex; align-items: center; gap: 8rpx; font-size: 26rpx; color: #1677ff; font-weight: 500; }
+.filter-badge { background: #1677ff; color: #fff; font-size: 20rpx; padding: 2rpx 12rpx; border-radius: 10rpx; }
+.filter-arrow { font-size: 20rpx; }
+.filter-panel { margin-top: 20rpx; padding-top: 20rpx; border-top: 1rpx solid #f0f2f5; }
+.filter-search { background: #f5f5f5; border: none; border-radius: 14rpx; padding: 18rpx 24rpx; font-size: 26rpx; margin-bottom: 16rpx; }
+.filter-row { display: flex; gap: 12rpx; margin-bottom: 16rpx; flex-wrap: wrap; }
+.filter-chip { background: #f5f5f5; padding: 14rpx 22rpx; border-radius: 22rpx; font-size: 24rpx; color: #666; }
+.filter-actions { display: flex; align-items: center; justify-content: flex-end; gap: 16rpx; }
+.filter-reset { font-size: 26rpx; color: #999; }
+.primary-btn.small { padding: 14rpx 32rpx; font-size: 26rpx; border-radius: 24rpx; }
+
+/* 账单列表 */
+.exp-swipe-wrap { position: relative; overflow: hidden; }
+.exp-swipe-del { position: absolute; right: 0; top: 0; bottom: 0; width: 160rpx; background: #ff4d4f; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 28rpx; border-radius: 10rpx; font-weight: 600; }
+.exp-swipe-row { position: relative; z-index: 1; background: #fff; display: flex; justify-content: space-between; align-items: center; padding: 24rpx 0; border-bottom: 1rpx solid #f5f5f5; transition: transform .2s ease; }
+.exp-swipe-row.swiped { transform: translateX(-170rpx); }
+.exp-left { display: flex; align-items: center; gap: 16rpx; flex: 1; overflow: hidden; }
+.exp-icon { font-size: 40rpx; flex-shrink: 0; }
+.exp-name { font-size: 28rpx; font-weight: 600; }
+.exp-meta { font-size: 22rpx; color: #bbb; margin-top: 4rpx; }
+.exp-amount { font-size: 32rpx; font-weight: 800; flex-shrink: 0; margin-left: 20rpx; color: #ff4d4f; }
+.exp-amount.income { color: #07c160; }
+
+.empty { text-align: center; padding: 60rpx 0; color: #ccc; font-size: 28rpx; }
+.load-more { text-align: center; padding: 24rpx; color: #1677ff; font-size: 26rpx; }

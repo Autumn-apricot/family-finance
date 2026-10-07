@@ -1,0 +1,88 @@
+<view class="card" style="background:linear-gradient(135deg,#434343,#000000);color:#fff;border-radius:20rpx;">
+  <view class="summary-row">
+    <view class="summary-item">
+      <text class="label">我借出</text>
+      <text class="val lend">¥{{summary.outstanding_lend || 0}}</text>
+    </view>
+    <view class="summary-item">
+      <text class="label">我借入</text>
+      <text class="val borrow">¥{{summary.outstanding_borrow || 0}}</text>
+    </view>
+    <view class="summary-item">
+      <text class="label">净额</text>
+      <text class="val net">{{summary.net >= 0 ? '+' : ''}}¥{{summary.net || 0}}</text>
+    </view>
+  </view>
+  <view wx:if="{{summary.overdue_count > 0}}" class="summary-item">
+    <text class="val over">⚠️ {{summary.overdue_count}} 笔逾期</text>
+  </view>
+</view>
+
+<view class="filter-tabs">
+  <view class="filter-tab {{filter==='all'?'active':''}}" data-filter="all" bindtap="setFilter">全部</view>
+  <view class="filter-tab {{filter==='lend'?'active':''}}" data-filter="lend" bindtap="setFilter">我借出</view>
+  <view class="filter-tab {{filter==='borrow'?'active':''}}" data-filter="borrow" bindtap="setFilter">我借入</view>
+</view>
+
+<block wx:for="{{loans}}" wx:key="id">
+  <view class="loan-card">
+    <view class="loan-header">
+      <text class="loan-name">{{item.counterparty}}</text>
+      <text class="loan-amount {{item.direction}}">{{item.direction === 'lend' ? '-' : '+'}}¥{{item.amount}}</text>
+    </view>
+    <view class="loan-meta">
+      <text>{{item.loan_date}}</text>
+      <text wx:if="{{item.due_date}}">到期 {{item.due_date}}</text>
+      <view class="tag {{item.status}}">{{item.status === 'pending' ? '待还' : item.status === 'partial' ? '部分还' : item.status === 'settled' ? '已结清' : '逾期'}}</view>
+    </view>
+    <view wx:if="{{item.repaid_amount > 0}}" class="loan-meta" style="margin-top:8rpx">
+      <text>已还 ¥{{item.repaid_amount}} / 剩余 ¥{{item.remaining}}</text>
+    </view>
+    <view class="loan-actions">
+      <text wx:if="{{item.status !== 'settled'}}" data-id="{{item.id}}" bindtap="openRepay">记录还款</text>
+      <text data-id="{{item.id}}" bindtap="openEdit">编辑</text>
+      <text data-id="{{item.id}}" bindtap="deleteLoan" style="color:#ff4d4f">删除</text>
+    </view>
+  </view>
+</block>
+
+<view wx:if="{{!loans.length}}" class="text-muted" style="text-align:center;padding:80rpx">暂无借贷记录</view>
+
+<view class="fab" bindtap="openAdd">+</view>
+
+<!-- 添加/编辑弹窗 -->
+<view wx:if="{{modalVisible}}" class="modal-mask" bindtap="closeModal">
+  <view class="modal-card" catchtap="noop" style="background:#fff;border-radius:16rpx;width:640rpx;max-height:85vh;overflow-y:auto;">
+    <view style="font-size:34rpx;font-weight:bold;text-align:center;margin-bottom:30rpx">{{modalTitle}}</view>
+    <view style="display:flex;gap:16rpx;margin-bottom:20rpx">
+      <view class="filter-tab {{form.direction==='lend'?'active':''}}" data-field="direction" data-value="lend" bindtap="onFormField" style="flex:1;text-align:center">我借出</view>
+      <view class="filter-tab {{form.direction==='borrow'?'active':''}}" data-field="direction" data-value="borrow" bindtap="onFormField" style="flex:1;text-align:center">我借入</view>
+    </view>
+    <input placeholder="对方姓名" value="{{form.counterparty}}" data-field="counterparty" bindinput="onFormField" />
+    <input type="digit" placeholder="金额" value="{{form.amount}}" data-field="amount" bindinput="onFormField" />
+    <picker mode="date" value="{{form.loan_date}}" bindchange="onFormField" data-field="loan_date">
+      <view class="picker-row">日期：{{form.loan_date || '选择'}}</view>
+    </picker>
+    <picker mode="date" value="{{form.due_date || form.loan_date}}" bindchange="onFormField" data-field="due_date">
+      <view class="picker-row">还款日：{{form.due_date || '不设'}}</view>
+    </picker>
+    <input placeholder="备注（可选）" value="{{form.description}}" data-field="description" bindinput="onFormField" />
+    <view style="display:flex;gap:20rpx;margin-top:20rpx">
+      <button class="secondary-btn" bindtap="closeModal" style="flex:1">取消</button>
+      <button class="primary-btn" bindtap="submitForm" style="flex:1">保存</button>
+    </view>
+  </view>
+</view>
+
+<!-- 还款弹窗 -->
+<view wx:if="{{repayVisible}}" class="modal-mask" bindtap="closeRepay">
+  <view class="modal-card" catchtap="noop" style="background:#fff;border-radius:16rpx;padding:40rpx;width:560rpx">
+    <view style="font-size:34rpx;font-weight:bold;text-align:center;margin-bottom:24rpx">记录还款</view>
+    <view style="text-align:center;margin-bottom:20rpx;color:#666">{{repayName}}</view>
+    <input type="digit" placeholder="还款金额" value="{{repayAmount}}" bindinput="onRepayInput" style="border:1rpx solid #eee;padding:20rpx;border-radius:8rpx;margin-bottom:20rpx" />
+    <view style="display:flex;gap:20rpx">
+      <button class="secondary-btn" bindtap="closeRepay" style="flex:1">取消</button>
+      <button class="primary-btn" bindtap="submitRepay" style="flex:1">确认</button>
+    </view>
+  </view>
+</view>

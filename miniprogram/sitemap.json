@@ -1,0 +1,4 @@
+{
+  "desc": "家庭资产管理",
+  "rules": [{ "action": "allow", "page": "*" }]
+}

@@ -1,0 +1,147 @@
+<!-- 个人信息卡片 -->
+<view class="profile-card">
+  <view class="profile-bg"></view>
+  <view class="profile-content">
+    <view class="profile-avatar">{{user.nickname ? user.nickname.charAt(0) : user.username.charAt(0)}}</view>
+    <view class="profile-name">{{user.nickname || user.username}}</view>
+    <view class="profile-role">@{{user.username}} · {{user.role === 'admin' ? '管理员' : '成员'}}</view>
+  </view>
+</view>
+
+<!-- 家庭 -->
+<view wx:if="{{family.has_family}}" class="card family-card">
+  <view class="family-header">
+    <text>👨‍👩‍👧 {{family.family.name}}</text>
+    <text class="family-code">邀请码 {{family.family.invite_code}}</text>
+  </view>
+  <view class="family-members">
+    <text wx:for="{{family.members}}" wx:key="id" class="family-member">{{item.nickname}} {{item.role === 'admin' ? '👑' : ''}}</text>
+  </view>
+  <view class="family-actions">
+    <button class="secondary-btn small" bindtap="leaveFamily">退出家庭</button>
+  </view>
+</view>
+<view wx:if="{{!family.has_family && !familyLoading}}" class="card family-empty" bindtap="openFamilyModal">
+  <text>👨‍👩‍👧 创建或加入家庭，与家人共享账单</text>
+  <text class="arrow">›</text>
+</view>
+
+<!-- 钱包 -->
+<view wx:if="{{wallets.length}}" class="card wallet-card">
+  <view class="wallet-header">
+    <text>💰 我的钱包</text>
+    <text class="wallet-total">¥{{walletTotal}}</text>
+  </view>
+  <view class="wallet-grid">
+    <view wx:for="{{wallets}}" wx:key="method" class="wallet-item {{item.isNeg ? 'neg' : ''}}" data-method="{{item.method}}" bindtap="editWallet">
+      <text class="wallet-icon">{{item.icon}}</text>
+      <text class="wallet-label">{{item.label}}</text>
+      <text class="wallet-balance {{item.isNeg ? 'neg' : ''}}">¥{{item.balanceFmt}}</text>
+    </view>
+  </view>
+  <view class="wallet-tip">点击修改余额</view>
+</view>
+
+<!-- 设置 -->
+<view class="card settings-card">
+  <view class="setting-row" bindtap="openBudget">
+    <view class="setting-left">
+      <text class="setting-icon">📊</text>
+      <text>月度预算设置</text>
+    </view>
+    <text class="arrow">›</text>
+  </view>
+  <view class="setting-row" bindtap="openRecurring">
+    <view class="setting-left">
+      <text class="setting-icon">🔄</text>
+      <text>周期账单</text>
+    </view>
+    <text class="arrow">›</text>
+  </view>
+  <view class="setting-row">
+    <view class="setting-left">
+      <text class="setting-icon">🙈</text>
+      <text>隐藏首页金额</text>
+    </view>
+    <switch checked="{{hideTotal}}" bindchange="onHideTotal" color="#1677ff" />
+  </view>
+</view>
+
+<!-- 退出 -->
+<view class="logout-wrap">
+  <button class="logout-btn" bindtap="logout">退出登录</button>
+</view>
+
+<!-- 家庭弹窗 -->
+<view wx:if="{{familyModalVisible}}" class="modal-mask" bindtap="closeFamilyModal">
+  <view class="modal-card" catchtap="noop" style="width:600rpx">
+    <view class="modal-title">👨‍👩‍👧 家庭</view>
+    <view style="margin-bottom:28rpx">
+      <text style="font-weight:700;font-size:28rpx;display:block;margin-bottom:16rpx">创建家庭</text>
+      <view style="display:flex;gap:12rpx">
+        <input placeholder="输入家庭名" value="{{familyName}}" bindinput="onFamilyName" style="flex:1" />
+        <button class="primary-btn" bindtap="createFamily" style="padding:20rpx 28rpx;font-size:26rpx;margin:0">创建</button>
+      </view>
+    </view>
+    <view>
+      <text style="font-weight:700;font-size:28rpx;display:block;margin-bottom:16rpx">加入家庭</text>
+      <view style="display:flex;gap:12rpx">
+        <input placeholder="输入邀请码" value="{{joinCode}}" bindinput="onJoinCode" style="flex:1" maxlength="6" />
+        <button class="primary-btn" bindtap="joinFamily" style="padding:20rpx 28rpx;font-size:26rpx;margin:0">加入</button>
+      </view>
+    </view>
+    <button class="secondary-btn" bindtap="closeFamilyModal" style="margin-top:24rpx">关闭</button>
+  </view>
+</view>
+
+<!-- 周期账单弹窗 -->
+<view wx:if="{{recurringVisible}}" class="modal-mask" bindtap="closeRecurring">
+  <view class="modal-card" catchtap="noop" style="width:660rpx">
+    <view class="modal-title">🔄 周期账单</view>
+    <scroll-view scroll-y style="max-height:400rpx">
+      <view wx:if="{{!recurringList.length}}" class="text-muted" style="text-align:center;padding:40rpx">暂无周期账单</view>
+      <view wx:for="{{recurringList}}" wx:key="id" class="rec-item">
+        <view style="flex:1">
+          <text>{{item.category_icon}} {{item.category_name}} · ¥{{item.amount}}</text>
+          <view class="text-muted">{{item.description || '无备注'}} · {{item.cycle === 'monthly' ? '每月' : item.cycle === 'weekly' ? '每周' : item.cycle === 'yearly' ? '每年' : '每天'}} · 下次 {{item.next_date}}</view>
+        </view>
+        <text class="rec-del" data-id="{{item.id}}" bindtap="deleteRecurring">删除</text>
+      </view>
+    </scroll-view>
+    <view style="margin-top:24rpx;padding-top:20rpx;border-top:1rpx solid #f0f2f5">
+      <view class="picker-label">分类</view>
+      <picker mode="selector" range="{{recCats}}" range-key="name" value="{{recCatIdx}}" bindchange="onRecCat">
+        <view class="picker-row">{{recCats[recCatIdx].name || '选择'}}</view>
+      </picker>
+      <input type="digit" placeholder="金额" value="{{recAmount}}" bindinput="onRecAmt" />
+      <input placeholder="备注（如房租、订阅）" value="{{recDesc}}" bindinput="onRecDesc" />
+      <view class="picker-label">周期</view>
+      <picker mode="selector" range="{{recCycles}}" value="{{recCycleIdx}}" bindchange="onRecCycle">
+        <view class="picker-row">{{recCycles[recCycleIdx]}}</view>
+      </picker>
+      <view class="modal-btns">
+        <button class="secondary-btn" bindtap="closeRecurring">关闭</button>
+        <button class="primary-btn" bindtap="addRecurring">添加</button>
+      </view>
+    </view>
+  </view>
+</view>
+
+<!-- 预算弹窗 -->
+<view wx:if="{{budgetVisible}}" class="modal-mask" bindtap="closeBudget">
+  <view class="modal-card" catchtap="noop">
+    <view class="modal-title">{{budgetMonth}} 月度预算</view>
+    <view class="budget-copy" bindtap="copyLastBudget">📋 复制上月预算</view>
+    <scroll-view scroll-y class="budget-scroll">
+      <view wx:for="{{budgetItems}}" wx:key="categoryId" class="budget-item">
+        <text class="budget-icon">{{item.icon}}</text>
+        <text class="budget-name">{{item.name}}</text>
+        <input type="digit" class="budget-input" placeholder="不限" value="{{item.budget}}" data-idx="{{index}}" bindinput="onBudgetInput" />
+      </view>
+    </scroll-view>
+    <view class="modal-btns">
+      <button class="secondary-btn" bindtap="closeBudget">取消</button>
+      <button class="primary-btn" bindtap="saveBudgets" loading="{{budgetSaving}}">保存</button>
+    </view>
+  </view>
+</view>

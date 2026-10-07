@@ -1,0 +1,71 @@
+<!-- 语音输入组件骨架 -->
+<view class="voice-input {{disabled ? 'disabled' : ''}}">
+
+  <view class="voice-hint warn" wx:if="{{!pluginReady}}">
+    <text>麦克风不可用：请登录 mp.weixin.qq.com → 设置 → 插件管理 → 添加「微信同声传译」。或先用下方「文字智能记账」。</text>
+  </view>
+
+  <!-- 实时识别 / 状态提示 -->
+  <view class="voice-hint" wx:if="{{status === 'recording'}}">
+    <view class="pulse-dot"></view>
+    <text>松开结束 · {{recordSeconds}}s</text>
+    <text class="partial" wx:if="{{partialText}}">{{partialText}}</text>
+  </view>
+
+  <view class="voice-hint processing" wx:elif="{{status === 'processing'}}">
+    <text>识别解析中…</text>
+  </view>
+
+  <view class="voice-hint error" wx:elif="{{status === 'error'}}">
+    <text>{{errorMessage}}</text>
+    <view class="btn-link" bindtap="onRetry">重新录制</view>
+  </view>
+
+  <!-- 麦克风按钮：hold 模式 -->
+  <view
+    wx:if="{{mode === 'hold' && pluginReady}}"
+    class="mic-btn {{status === 'recording' ? 'recording' : ''}}"
+    bindtouchstart="onTouchStart"
+    bindtouchend="onTouchEnd"
+    bindtouchcancel="onTouchEnd"
+  >
+    <text class="mic-icon">🎤</text>
+    <text class="mic-label">{{status === 'recording' ? '松开结束' : '按住说话'}}</text>
+  </view>
+
+  <!-- tap 模式 -->
+  <view
+    wx:elif="{{pluginReady}}"
+    class="mic-btn {{status === 'recording' ? 'recording' : ''}}"
+    bindtap="onTapMic"
+  >
+    <text class="mic-icon">🎤</text>
+    <text class="mic-label">{{status === 'recording' ? '点击结束' : '点击录音'}}</text>
+  </view>
+
+  <!-- 预览卡片（父页面也可自行渲染，此处提供默认骨架） -->
+  <view class="preview-card" wx:if="{{status === 'preview' && preview}}">
+    <view class="preview-row">
+      <text class="label">识别</text>
+      <text class="value">{{preview.raw_text || finalText}}</text>
+    </view>
+    <view class="preview-row">
+      <text class="label">分类</text>
+      <text class="value">{{preview.category_icon}} {{preview.category_name}}</text>
+      <text class="confidence" wx:if="{{preview.confidence >= 0.85}}">高</text>
+      <text class="confidence warn" wx:elif="{{preview.confidence < 0.6}}">请核对</text>
+    </view>
+    <view class="preview-row">
+      <text class="label">金额</text>
+      <text class="value amount">{{preview.amount != null ? '¥' + preview.amount : '待补充'}}</text>
+    </view>
+    <view class="preview-row">
+      <text class="label">日期</text>
+      <text class="value">{{preview.expense_date}}</text>
+    </view>
+    <view class="preview-actions">
+      <view class="btn-outline" bindtap="onRetry">重新录制</view>
+    </view>
+  </view>
+
+</view>

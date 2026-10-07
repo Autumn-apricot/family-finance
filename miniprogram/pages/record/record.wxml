@@ -1,0 +1,144 @@
+<!-- 支出/收入切换 -->
+<view class="type-tabs">
+  <view class="type-tab {{expenseType === 'expense' ? 'on' : ''}} out" data-type="expense" bindtap="onToggleType">
+    <text>📤 支出</text>
+  </view>
+  <view class="type-tab {{expenseType === 'income' ? 'on' : ''}} in" data-type="income" bindtap="onToggleType">
+    <text>📥 收入</text>
+  </view>
+</view>
+
+<!-- 文字智能记账 -->
+<view class="card smart-card">
+  <view class="smart-row">
+    <input class="smart-input" placeholder="输入或说出：午饭35元、打车20..." value="{{textParseInput}}" bindinput="onTextParseInput" confirm-type="done" />
+    <button class="smart-btn mic-btn {{recording ? 'recording' : ''}}" bindtouchstart="startRecord" bindtouchend="stopRecord" bindtouchcancel="stopRecord">{{recording ? '🔴 松开发送' : '🎤'}}</button>
+    <button class="smart-btn" bindtap="parseByText">🤖 解析</button>
+  </view>
+  <view wx:if="{{recording}}" class="recording-hint">
+    <text class="rec-wave">🎙️ 正在聆听...</text>
+    <text class="rec-time">{{recordSeconds}}s</text>
+  </view>
+</view>
+
+<!-- 手动记账表单 -->
+<view class="card form-card">
+  <view class="form-section">
+    <view class="form-label">📂 分类</view>
+    <picker mode="selector" range="{{categories}}" range-key="name" value="{{parentIndex}}" bindchange="onParentCategory">
+      <view class="form-value">{{categories[parentIndex].name || '请选择一级分类'}}</view>
+    </picker>
+  </view>
+  <view wx:if="{{subCategories.length > 0}}" class="form-section">
+    <view class="form-label">📁 子分类</view>
+    <picker mode="selector" range="{{subCategories}}" range-key="name" value="{{subIndex}}" bindchange="onSubCategory">
+      <view class="form-value">{{subCategories[subIndex].name}}</view>
+    </picker>
+  </view>
+  <view class="form-row">
+    <view class="form-section" style="flex:1;margin-right:16rpx">
+      <view class="form-label">💵 金额</view>
+      <input type="digit" placeholder="0.00" value="{{amount}}" bindinput="onAmount" />
+    </view>
+    <view class="form-section" style="flex:1">
+      <view class="form-label">💳 支付</view>
+      <picker mode="selector" range="{{paymentOptions}}" value="{{paymentIndex}}" bindchange="onPayment">
+        <view class="form-value">{{paymentOptions[paymentIndex]}}</view>
+      </picker>
+    </view>
+  </view>
+  <view class="form-section">
+    <view class="form-label">📝 备注</view>
+    <input placeholder="添加备注..." value="{{description}}" bindinput="onDesc" />
+  </view>
+  <view class="form-section">
+    <view class="form-label">📅 日期</view>
+    <picker mode="date" value="{{expenseDate}}" bindchange="onDate">
+      <view class="form-value">{{expenseDate}}</view>
+    </picker>
+  </view>
+  <button class="primary-btn" bindtap="submit">💾 保存</button>
+</view>
+
+<!-- 账单流水 -->
+<view class="card list-card">
+  <view class="list-header">
+    <text class="list-title">📋 账单流水</text>
+    <view class="list-filter" bindtap="toggleFilter">
+      <text>筛选</text>
+      <text wx:if="{{filterCategoryName !== '全部'}}" class="filter-badge">{{filterCategoryName}}</text>
+      <text class="filter-arrow">{{filterVisible ? '▲' : '▼'}}</text>
+    </view>
+  </view>
+  <view wx:if="{{filterVisible}}" class="filter-panel">
+    <input class="filter-search" placeholder="🔍 搜索备注..." value="{{filterSearch}}" bindinput="onFilterSearch" />
+    <view class="filter-row">
+      <picker mode="date" value="{{filterDateFrom}}" bindchange="onFilterDateFrom">
+        <view class="filter-chip">{{filterDateFrom || '📅 开始'}}</view>
+      </picker>
+      <picker mode="date" value="{{filterDateTo}}" bindchange="onFilterDateTo">
+        <view class="filter-chip">{{filterDateTo || '📅 结束'}}</view>
+      </picker>
+      <picker mode="selector" range="{{filterCategoryOptions}}" value="{{filterCategoryIdx}}" bindchange="onFilterCategory">
+        <view class="filter-chip">{{filterCategoryName}}</view>
+      </picker>
+    </view>
+    <view class="filter-actions">
+      <text class="filter-reset" bindtap="resetFilter">重置</text>
+      <button class="primary-btn small" bindtap="applyFilter">应用</button>
+    </view>
+  </view>
+</view>
+
+<!-- 账单列表 -->
+<view class="card list-card" style="padding-top:0;padding-bottom:0">
+  <block wx:for="{{expenses}}" wx:key="id">
+    <view class="exp-swipe-wrap">
+      <view class="exp-swipe-del" data-id="{{item.id}}" bindtap="removeExpense">删除</view>
+      <view class="exp-swipe-row {{swipedId === item.id ? 'swiped' : ''}}"
+        data-id="{{item.id}}"
+        bindtouchstart="onTouchStart" bindtouchmove="onTouchMove" bindtouchend="onTouchEnd"
+        bindtap="onTapRow">
+        <view class="exp-left">
+          <text class="exp-icon">{{item.category_icon}}</text>
+          <view>
+            <text class="exp-name {{item.category_type === 'income' ? 'income-color' : ''}}">{{item.parent_category_name ? item.parent_category_name + '—' : ''}}{{item.category_name}}</text>
+            <view class="exp-meta">{{item.user_nickname}} · {{item.expense_date}} · {{item.payment_method_icon || ''}} {{item.source === 'voice' ? '智能' : '手动'}}</view>
+          </view>
+        </view>
+        <text class="exp-amount {{item.category_type === 'income' ? 'income' : ''}}">{{item.category_type === 'income' ? '+' : ''}}¥{{item.amount}}</text>
+      </view>
+    </view>
+  </block>
+  <view wx:if="{{!expenses.length && (filterDateFrom || filterDateTo || filterCategoryId || filterSearch)}}" class="empty">筛选无结果，试试调整条件</view>
+  <view wx:elif="{{!expenses.length}}" class="empty">暂无账单，记一笔吧 ✍️</view>
+  <view wx:if="{{hasMore && expenses.length}}" class="load-more" bindtap="loadMore">加载更多</view>
+</view>
+
+<!-- 编辑弹窗 -->
+<view wx:if="{{editModalVisible}}" class="modal-mask" bindtap="closeEditModal">
+  <view class="modal-card" catchtap="noop">
+    <view class="modal-title">✏️ 编辑账单</view>
+    <view class="picker-label">一级分类</view>
+    <picker mode="selector" range="{{categories}}" range-key="name" value="{{editParentIndex}}" bindchange="onEditParentCategory">
+      <view class="picker-row">{{categories[editParentIndex].name || '请选择'}}</view>
+    </picker>
+    <view wx:if="{{editSubCategories.length > 0}}" class="picker-label">二级分类</view>
+    <picker wx:if="{{editSubCategories.length > 0}}" mode="selector" range="{{editSubCategories}}" range-key="name" value="{{editSubIndex}}" bindchange="onEditSubCategory">
+      <view class="picker-row">{{editSubCategories[editSubIndex].name}}</view>
+    </picker>
+    <input type="digit" placeholder="金额" value="{{editAmount}}" bindinput="onEditAmount" />
+    <view class="picker-label">支付方式</view>
+    <picker mode="selector" range="{{paymentOptions}}" value="{{editPaymentIndex}}" bindchange="onEditPayment">
+      <view class="picker-row">{{paymentOptions[editPaymentIndex]}}</view>
+    </picker>
+    <input placeholder="备注" value="{{editDescription}}" bindinput="onEditDesc" />
+    <picker mode="date" value="{{editDate}}" bindchange="onEditDate">
+      <view class="picker-row">日期：{{editDate}}</view>
+    </picker>
+    <view class="modal-btns">
+      <button class="secondary-btn" bindtap="closeEditModal">取消</button>
+      <button class="primary-btn" bindtap="submitEdit">保存</button>
+    </view>
+  </view>
+</view>

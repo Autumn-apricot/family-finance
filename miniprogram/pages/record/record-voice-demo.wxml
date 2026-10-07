@@ -1,0 +1,13 @@
+<!-- 记账页语音区域集成示例 -->
+<view class="section-title">语音记账</view>
+
+<voice-input
+  mode="hold"
+  reference-date="{{referenceDate}}"
+  bind:parsed="onVoiceParsed"
+  bind:error="onVoiceError"
+/>
+
+<view class="confirm-bar" wx:if="{{voicePreview}}">
+  <button type="primary" bindtap="onConfirmVoiceSave">确认保存</button>
+</view>

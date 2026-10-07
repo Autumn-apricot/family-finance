@@ -1,0 +1,5 @@
+{
+  "usingComponents": {
+    "voice-input": "/components/voice-input/voice-input"
+  }
+}

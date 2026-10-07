@@ -1,0 +1,53 @@
+/* 概览卡片 */
+.hero-card { position: relative; margin: 20rpx 24rpx; border-radius: 24rpx; overflow: hidden; }
+.hero-bg { position: absolute; inset: 0; background: linear-gradient(135deg, #1677ff, #722ed1); }
+.hero-content { position: relative; z-index: 1; padding: 32rpx 28rpx; }
+.hero-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20rpx; }
+.hero-date { font-size: 24rpx; color: rgba(255,255,255,.7); }
+.view-toggle { font-size: 24rpx; color: rgba(255,255,255,.5); display: flex; gap: 8rpx; }
+.view-toggle text.on { color: #fff; font-weight: 700; }
+.hero-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20rpx 0; margin-bottom: 20rpx; }
+.hero-item { text-align: center; }
+.hero-val { font-size: 44rpx; font-weight: 800; color: #fff; display: block; }
+.hero-val.out { color: #ffd591; }
+.hero-val.in { color: #b7eb8f; }
+.hero-val.bal { color: #91d5ff; }
+.hero-label { font-size: 22rpx; color: rgba(255,255,255,.6); margin-top: 2rpx; }
+
+.budget-bar { margin-top: 8rpx; padding-top: 20rpx; border-top: 1rpx solid rgba(255,255,255,.15); }
+.budget-head { display: flex; justify-content: space-between; font-size: 24rpx; color: rgba(255,255,255,.75); margin-bottom: 10rpx; }
+.budget-head .over { color: #ffd591; font-weight: 700; }
+.progress { height: 12rpx; background: rgba(255,255,255,.2); border-radius: 6rpx; overflow: hidden; }
+.progress-fill { height: 100%; background: rgba(255,255,255,.8); border-radius: 6rpx; transition: width .4s ease; }
+.progress-fill.over { background: #ffd591; }
+
+.loan-chips { display: flex; align-items: center; gap: 12rpx; margin-top: 16rpx; padding-top: 16rpx; border-top: 1rpx solid rgba(255,255,255,.15); }
+.loan-chip { font-size: 22rpx; padding: 8rpx 18rpx; border-radius: 14rpx; font-weight: 600; }
+.loan-chip.lend { background: rgba(255,255,255,.2); color: #ffd591; }
+.loan-chip.borrow { background: rgba(255,255,255,.2); color: #91d5ff; }
+.loan-chip.over { background: rgba(255,77,79,.4); color: #ffd591; }
+.arrow-white { font-size: 36rpx; color: rgba(255,255,255,.5); margin-left: auto; }
+
+/* 操作按钮 */
+.actions { display: flex; gap: 16rpx; margin: 0 24rpx 20rpx; }
+.action-btn { flex: 1; display: flex; align-items: center; justify-content: center; gap: 10rpx; padding: 24rpx; border-radius: 18rpx; font-size: 28rpx; font-weight: 600; background: #fff; color: #333; box-shadow: 0 2rpx 12rpx rgba(0,0,0,.04); }
+.action-btn.primary { background: #1677ff; color: #fff; box-shadow: 0 4rpx 16rpx rgba(22,119,255,.25); }
+.action-icon { font-size: 32rpx; }
+
+/* 账单列表 */
+.list-card { padding: 28rpx; }
+.list-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8rpx; }
+.list-title { font-size: 30rpx; font-weight: 700; color: #1a1a2e; }
+.list-more { font-size: 24rpx; color: #1677ff; }
+
+.exp-swipe-wrap { position: relative; overflow: hidden; }
+.exp-swipe-del { position: absolute; right: 0; top: 0; bottom: 0; width: 160rpx; background: #ff4d4f; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 28rpx; border-radius: 10rpx; font-weight: 600; }
+.exp-row { position: relative; z-index: 1; background: #fff; display: flex; justify-content: space-between; align-items: center; padding: 22rpx 0; border-bottom: 1rpx solid #f5f5f5; transition: transform .2s ease; }
+.exp-row.swiped { transform: translateX(-170rpx); }
+.exp-left { display: flex; align-items: center; gap: 16rpx; flex: 1; overflow: hidden; }
+.exp-icon { font-size: 38rpx; flex-shrink: 0; }
+.exp-name { font-size: 28rpx; font-weight: 600; }
+.exp-meta { font-size: 22rpx; color: #bbb; margin-top: 4rpx; }
+.exp-amount { font-size: 30rpx; font-weight: 800; flex-shrink: 0; margin-left: 16rpx; color: #ff4d4f; }
+.exp-amount.income { color: #07c160; }
+.empty { text-align: center; padding: 40rpx 0; color: #ccc; font-size: 26rpx; }

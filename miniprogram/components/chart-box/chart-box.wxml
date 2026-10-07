@@ -1,0 +1,10 @@
+<view class="chart-wrap">
+  <canvas type="2d" id="chart-canvas" class="chart-canvas" style="width:{{width}}px;height:{{height}}px;"></canvas>
+  <view wx:if="{{type === 'ring' && legendData.length}}" class="legend">
+    <view wx:for="{{legendData}}" wx:key="label" class="legend-item">
+      <view class="dot" style="background:{{item.color}};"></view>
+      <text class="label">{{item.label}}</text>
+      <text class="val">{{item.percent}}%</text>
+    </view>
+  </view>
+</view>

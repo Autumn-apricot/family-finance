@@ -1,0 +1,132 @@
+<!-- 标签栏 -->
+<view class="tabs">
+  <view class="tab {{tab==='day'?'active':''}}" data-tab="day" bindtap="switchTab">📅 日</view>
+  <view class="tab {{tab==='week'?'active':''}}" data-tab="week" bindtap="switchTab">📆 周</view>
+  <view class="tab {{tab==='month'?'active':''}}" data-tab="month" bindtap="switchTab">📊 月</view>
+  <view class="tab {{tab==='year'?'active':''}}" data-tab="year" bindtap="switchTab">📈 年</view>
+</view>
+
+<!-- ===== 日 ===== -->
+<block wx:if="{{tab==='day'}}">
+  <view class="card kpi-card">
+    <picker mode="date" value="{{date}}" bindchange="onDate"><view class="kpi-date">{{date}}</view></picker>
+    <view class="kpi-row">
+      <view class="kpi-item out"><text class="kpi-num">-¥{{daily.total_expense || '0'}}</text><text class="kpi-label">支出</text></view>
+      <view class="kpi-divider"> </view>
+      <view class="kpi-item in"><text class="kpi-num">+¥{{daily.total_income || '0'}}</text><text class="kpi-label">收入</text></view>
+    </view>
+  </view>
+  <view wx:if="{{daily.by_category.length}}" class="card">
+    <view class="section-title">📂 支出分类</view>
+    <block wx:for="{{daily.by_category}}" wx:key="category_id">
+      <view class="bar-row">
+        <text>{{item.name}}</text>
+        <view class="bar-wrap"><view class="bar-fill" style="width:{{item.percent}}%;background:#ff4d4f"></view></view>
+        <text class="bar-val">¥{{item.amount}}</text>
+      </view>
+    </block>
+  </view>
+  <view wx:if="{{daily.by_income_category.length}}" class="card">
+    <view class="section-title">💰 收入分类</view>
+    <block wx:for="{{daily.by_income_category}}" wx:key="category_id">
+      <view class="bar-row">
+        <text>{{item.name}}</text>
+        <view class="bar-wrap"><view class="bar-fill" style="width:{{item.percent}}%;background:#07c160"></view></view>
+        <text class="bar-val">¥{{item.amount}}</text>
+      </view>
+    </block>
+  </view>
+</block>
+
+<!-- ===== 周 ===== -->
+<block wx:if="{{tab==='week'}}">
+  <view class="card kpi-card">
+    <picker mode="date" value="{{weekStart}}" bindchange="onWeek"><view class="kpi-date">{{weekStart}} 起</view></picker>
+    <view class="kpi-row">
+      <view class="kpi-item out"><text class="kpi-num">-¥{{weekly.total_expense || '0'}}</text><text class="kpi-label">支出</text></view>
+      <view class="kpi-divider"> </view>
+      <view class="kpi-item in"><text class="kpi-num">+¥{{weekly.total_income || '0'}}</text><text class="kpi-label">收入</text></view>
+    </view>
+  </view>
+  <view wx:if="{{weekTrendData.length}}" class="card">
+    <view class="section-title">📈 每日趋势</view>
+    <chart-box type="bar" data="{{weekTrendData}}" />
+  </view>
+</block>
+
+<!-- ===== 月 ===== -->
+<block wx:if="{{tab==='month'}}">
+  <view class="card kpi-card">
+    <picker mode="date" fields="month" value="{{month}}-01" bindchange="onMonth"><view class="kpi-date">{{month}}</view></picker>
+    <view class="kpi-row">
+      <view class="kpi-item out"><text class="kpi-num">-¥{{monthly.total_expense || '0'}}</text><text class="kpi-label">支出</text></view>
+      <view class="kpi-divider"> </view>
+      <view class="kpi-item in"><text class="kpi-num">+¥{{monthly.total_income || '0'}}</text><text class="kpi-label">收入</text></view>
+      <view class="kpi-divider"> </view>
+      <view class="kpi-item bal"><text class="kpi-num">¥{{monthly.balance || '0'}}</text><text class="kpi-label">结余</text></view>
+    </view>
+    <view class="share-btn-wrap">
+      <button class="share-btn" bindtap="generateShareCard">📤 生成分享卡片</button>
+    </view>
+  </view>
+  <canvas type="2d" id="shareCanvas" style="position:fixed;left:-9999px;width:750rpx;height:1200rpx;"></canvas>
+  <view wx:if="{{monthRingData.length}}" class="card">
+    <view class="section-title">📂 分类占比</view>
+    <chart-box type="ring" data="{{monthRingData}}" height="{{280}}" />
+    <view wx:if="{{monthly.by_category.length}}" class="budget-list">
+      <view wx:for="{{monthly.by_category}}" wx:key="category_id" class="budget-row {{item.overBudget ? 'over' : ''}}">
+        <text>{{item.name}}</text>
+        <view class="budget-amounts">
+          <text>已花 ¥{{item.amount}}</text>
+          <text wx:if="{{item.budget > 0}}" class="budget-cap"> / ¥{{item.budget}}</text>
+        </view>
+        <text wx:if="{{item.overBudget}}" class="over-tag">超支</text>
+      </view>
+    </view>
+  </view>
+  <view wx:if="{{monthIncomeData.length}}" class="card">
+    <view class="section-title">💰 收入来源</view>
+    <chart-box type="ring" data="{{monthIncomeData}}" height="{{260}}" />
+  </view>
+  <view wx:if="{{monthly.by_member.length}}" class="card">
+    <view class="section-title">👥 成员贡献</view>
+    <block wx:for="{{monthly.by_member}}" wx:key="user_id">
+      <view class="member-row">
+        <text class="member-name">{{item.nickname}}</text>
+        <view class="member-amounts">
+          <text class="member-out">-¥{{item.expense || '0'}}</text>
+          <text class="member-in">+¥{{item.income || '0'}}</text>
+        </view>
+      </view>
+    </block>
+  </view>
+</block>
+
+<!-- ===== 年 ===== -->
+<block wx:if="{{tab==='year'}}">
+  <view class="card kpi-card">
+    <picker mode="date" fields="year" value="{{year}}-01-01" bindchange="onYear"><view class="kpi-date">{{year}} 年</view></picker>
+    <view class="kpi-row">
+      <view class="kpi-item out"><text class="kpi-num">-¥{{annual.total_expense || '0'}}</text><text class="kpi-label">总支出</text></view>
+      <view class="kpi-divider"> </view>
+      <view class="kpi-item in"><text class="kpi-num">+¥{{annual.total_income || '0'}}</text><text class="kpi-label">总收入</text></view>
+    </view>
+  </view>
+  <view wx:if="{{annual.monthly_trend.length}}" class="card">
+    <view class="section-title">📈 月度趋势</view>
+    <block wx:for="{{annual.monthly_trend}}" wx:key="month">
+      <view class="trend-row" data-month="{{item.month}}" bindtap="goToMonth">
+        <text class="trend-month">{{item.month}}</text>
+        <view class="trend-bar-wrap">
+          <view class="trend-bar-out" style="width:{{item.barOut}}%"></view>
+          <view class="trend-bar-in" style="width:{{item.barIn}}%"></view>
+        </view>
+        <view class="trend-amounts">
+          <text class="member-out">-¥{{item.expense || '0'}}</text>
+          <text class="member-in">+¥{{item.income || '0'}}</text>
+        </view>
+        <text class="arrow">›</text>
+      </view>
+    </block>
+  </view>
+</block>

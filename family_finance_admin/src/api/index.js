@@ -1,0 +1,18 @@
+import request from './request'
+
+export const login = (data) => request.post('/auth/login/', data)
+export const getMe = () => request.get('/users/me/')
+export const getUsers = (params) => request.get('/users/', { params })
+export const patchUser = (id, data) => request.patch(`/users/${id}/`, data)
+export const getExpenses = (params) => request.get('/expenses/', { params })
+export const deleteExpense = (id) => request.delete(`/expenses/${id}/`)
+export const getDashboard = () => request.get('/admin/dashboard/')
+export const getVoiceStats = () => request.get('/admin/voice-stats/')
+export const getConfig = () => request.get('/admin/config/')
+export const putConfig = (data) => request.put('/admin/config/', data)
+export const getCategories = (params) => request.get('/categories/', { params })
+export const createCategory = (data) => request.post('/categories/', data)
+export const updateCategory = (id, data) => request.patch(`/categories/${id}/`, data)
+export const deleteCategory = (id) => request.delete(`/categories/${id}/`)
+export const getStatsMonthly = (month) => request.get('/stats/monthly/', { params: { month } })
+export const getStatsSummary = () => request.get('/stats/summary/')

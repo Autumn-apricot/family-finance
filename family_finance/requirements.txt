@@ -1,0 +1,10 @@
+Django==4.2.13
+djangorestframework==3.14.0
+djangorestframework-simplejwt==5.3.1
+django-cors-headers==4.3.1
+PyMySQL==1.1.0
+# mysqlclient==2.2.4
+# 若已安装 mysqlclient，可在 .env 设置 DB_USE_PYMYSQL=false
+python-dotenv==1.0.1
+requests==2.31.0
+httpx==0.27.0

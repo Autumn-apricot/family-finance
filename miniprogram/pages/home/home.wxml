@@ -1,0 +1,108 @@
+<!-- 概览卡片 -->
+<view class="hero-card">
+  <view class="hero-bg"></view>
+  <view class="hero-content">
+    <view class="hero-top">
+    <text class="hero-date">{{todayDate}}</text>
+    <view wx:if="{{hasFamily}}" class="view-toggle" bindtap="toggleView">
+      <text class="{{familyView ? 'on' : ''}}">全家</text>
+      <text>|</text>
+      <text class="{{!familyView ? 'on' : ''}}">个人</text>
+    </view>
+  </view>
+    <view class="hero-grid">
+      <view class="hero-item">
+        <text class="hero-val out">-¥{{summary.today_expense || '0'}}</text>
+        <text class="hero-label">今日支出</text>
+      </view>
+      <view class="hero-item">
+        <text class="hero-val">¥{{summary.month_expense || '0'}}</text>
+        <text class="hero-label">本月支出</text>
+      </view>
+      <view class="hero-item">
+        <text class="hero-val in">+¥{{summary.month_income || '0'}}</text>
+        <text class="hero-label">本月收入</text>
+      </view>
+      <view class="hero-item">
+        <text class="hero-val bal">¥{{summary.month_balance || '0'}}</text>
+        <text class="hero-label">本月结余</text>
+      </view>
+    </view>
+
+    <view wx:if="{{summary.budget_total > 0}}" class="budget-bar">
+      <view class="budget-head">
+        <text>🎯 本月预算 ¥{{summary.budget_total}}</text>
+        <text class="{{summary.budget_used_percent > 90 ? 'over' : ''}}">{{summary.budget_used_percent}}%</text>
+      </view>
+      <view class="progress"><view class="progress-fill {{summary.budget_used_percent > 90 ? 'over' : ''}}" style="width:{{summary.budget_used_percent > 100 ? 100 : summary.budget_used_percent}}%"></view></view>
+    </view>
+
+    <view wx:if="{{loanSummary && (loanSummary.outstanding_lend > 0 || loanSummary.outstanding_borrow > 0)}}" class="loan-chips" bindtap="goLoan">
+      <view class="loan-chip lend">借出 ¥{{loanSummary.outstanding_lend || 0}}</view>
+      <view class="loan-chip borrow">借入 ¥{{loanSummary.outstanding_borrow || 0}}</view>
+      <view wx:if="{{loanSummary.overdue_count > 0}}" class="loan-chip over">⚠️ {{loanSummary.overdue_count}}笔逾期</view>
+      <text class="arrow-white">›</text>
+    </view>
+  </view>
+</view>
+
+<!-- 快捷操作 -->
+<view class="actions">
+  <view class="action-btn primary" bindtap="goRecord"><text class="action-icon">✏️</text><text>记一笔</text></view>
+  <view class="action-btn" bindtap="goLoan"><text class="action-icon">💳</text><text>借贷</text></view>
+</view>
+
+<!-- 近期账单 -->
+<view class="card list-card">
+  <view class="list-header">
+    <text class="list-title">📋 近期账单</text>
+    <text class="list-more" bindtap="goRecord">全部 ›</text>
+  </view>
+  <block wx:for="{{expenses}}" wx:key="id">
+    <view class="exp-swipe-wrap">
+      <view class="exp-swipe-del" data-id="{{item.id}}" bindtap="removeExpense">删除</view>
+      <view class="exp-row {{swipedId === item.id ? 'swiped' : ''}}"
+        data-id="{{item.id}}"
+        bindtouchstart="onTouchStart" bindtouchmove="onTouchMove" bindtouchend="onTouchEnd"
+        bindtap="onTapRow">
+        <view class="exp-left">
+          <text class="exp-icon">{{item.category_icon}}</text>
+          <view>
+            <text class="exp-name {{item.category_type === 'income' ? 'income-color' : ''}}">{{item.parent_category_name ? item.parent_category_name + '—' : ''}}{{item.category_name}}</text>
+            <view class="exp-meta">{{item.user_nickname}} · {{item.expense_date}} · {{item.payment_method_icon || ''}} {{item.description || '无备注'}}</view>
+          </view>
+        </view>
+        <text class="exp-amount {{item.category_type === 'income' ? 'income' : ''}}">{{item.category_type === 'income' ? '+' : ''}}¥{{item.amount}}</text>
+      </view>
+    </view>
+  </block>
+  <view wx:if="{{!expenses.length}}" class="empty">暂无账单，记一笔吧 ✍️</view>
+</view>
+
+<!-- 编辑弹窗 -->
+<view wx:if="{{editVisible}}" class="modal-mask" bindtap="closeEdit">
+  <view class="modal-card" catchtap="noop">
+    <view class="modal-title">✏️ 编辑账单</view>
+    <view class="picker-label">一级分类</view>
+    <picker mode="selector" range="{{editCategories}}" range-key="name" value="{{editParentIndex}}" bindchange="onEditParent">
+      <view class="picker-row">{{editCategories[editParentIndex].name || '请选择'}}</view>
+    </picker>
+    <view wx:if="{{editSubCategories.length > 0}}" class="picker-label">二级分类</view>
+    <picker wx:if="{{editSubCategories.length > 0}}" mode="selector" range="{{editSubCategories}}" range-key="name" value="{{editSubIndex}}" bindchange="onEditSub">
+      <view class="picker-row">{{editSubCategories[editSubIndex].name}}</view>
+    </picker>
+    <input type="digit" placeholder="金额" value="{{editAmount}}" bindinput="onEditAmt" />
+    <view class="picker-label">支付方式</view>
+    <picker mode="selector" range="{{paymentOptions}}" value="{{editPaymentIdx}}" bindchange="onEditPay">
+      <view class="picker-row">{{paymentOptions[editPaymentIdx]}}</view>
+    </picker>
+    <input placeholder="备注" value="{{editDesc}}" bindinput="onEditDesc" />
+    <picker mode="date" value="{{editDate}}" bindchange="onEditDate">
+      <view class="picker-row">日期：{{editDate}}</view>
+    </picker>
+    <view class="modal-btns">
+      <button class="secondary-btn" bindtap="closeEdit">取消</button>
+      <button class="primary-btn" bindtap="submitEdit">保存</button>
+    </view>
+  </view>
+</view>
